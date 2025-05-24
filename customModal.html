@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+</head>
+<style>
+  .custom-select-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .custom-select {
+    padding: 12px 16px;
+    border-radius: 5px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+  }
+
+  .custom-select::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%) rotate(45deg);
+    width: 6px;
+    height: 6px;
+    border-right: 2px solid #666;
+    border-bottom: 2px solid #666;
+    transition: transform 0.2s;
+  }
+
+  .custom-select.open::after {
+    transform: translateY(-50%) rotate(-135deg);
+  }
+
+  .select-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+    background: white;
+    z-index: 10;
+    border-radius: 0 0 5px 5px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .select-options div {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .select-options div:hover,
+  .select-options .selected {
+    background-color: #00192D;
+    color: #FFC107;
+  }
+</style>
+
+
+<body>
+    <!-- Trigger Button -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#timeTrackingModal">
+  Add Time Entry
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="timeTrackingModal" tabindex="-1" aria-labelledby="timeTrackingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow-lg">
+      <form action="{{ route('timeTracking.store') }}" method="POST">
+       
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="timeTrackingModalLabel"><i class="bi bi-clock-history me-2"></i>Time Tracking Entry</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+
+          <!-- Date -->
+          <div class="form-floating mb-3">
+            <input type="date" class="form-control" id="entry_date" name="date" required>
+            <label for="entry_date"><i class="bi bi-calendar-date me-2"></i>Date</label>
+          </div>
+
+          <!-- Time Management Score -->
+          <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="time_management" name="score" placeholder="Enter value" required>
+            <label for="time_management"><i class="bi bi-speedometer2 me-2"></i>Time Management Score</label>
+          </div>
+
+          <!-- Custom Time Period Select -->
+          <div class="mb-3">
+            <label class="form-label"><i class="bi bi-clock me-2"></i>Time Period</label>
+            <div class="custom-select-wrapper" id="custom-select-wrapper">
+              <div class="custom-select" id="custom-select" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+                Select Time Period
+              </div>
+              <div class="select-options" id="select-options" role="listbox">
+                <div role="option" data-value="Morning">Morning</div>
+                <div role="option" data-value="Mid_Morning">Mid Morning</div>
+                <div role="option" data-value="Afternoon">Afternoon</div>
+                <div role="option" data-value="Evening">Evening</div>
+              </div>
+              <!-- Hidden input to store selected value -->
+              <input type="hidden" name="time_period" id="time_period_hidden" required>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success"><i class="bi bi-check-circle me-1"></i>Submit</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i>Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+  const wrapper = document.getElementById('custom-select-wrapper');
+  const select = document.getElementById('custom-select');
+  const optionsContainer = document.getElementById('select-options');
+  const options = optionsContainer.querySelectorAll('[role="option"]');
+  const hiddenInput = document.getElementById('time_period_hidden');
+
+  const closeOptions = () => {
+    optionsContainer.style.display = 'none';
+    select.classList.remove('open');
+    select.setAttribute('aria-expanded', 'false');
+  };
+
+  select.addEventListener('click', () => {
+    const isOpen = optionsContainer.style.display === 'block';
+    optionsContainer.style.display = isOpen ? 'none' : 'block';
+    select.classList.toggle('open', !isOpen);
+    select.setAttribute('aria-expanded', !isOpen);
+  });
+
+  options.forEach(option => {
+    option.addEventListener('click', () => {
+      select.textContent = option.textContent;
+      select.setAttribute('data-value', option.dataset.value);
+      hiddenInput.value = option.dataset.value;
+      options.forEach(opt => opt.classList.remove('selected'));
+      option.classList.add('selected');
+      closeOptions();
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!wrapper.contains(e.target)) {
+      closeOptions();
+    }
+  });
+
+  select.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      select.click();
+    }
+    if (e.key === 'Escape') {
+      closeOptions();
+    }
+  });
+</script>
+
+
+
+</body>
+</html>
