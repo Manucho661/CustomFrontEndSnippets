@@ -87,10 +87,11 @@
   </div>
 
   <script>
-    const wrapper = document.getElementById('custom-select-wrapper');
-    const select = document.getElementById('custom-select');
-    const optionsContainer = document.getElementById('select-options');
-    const options = optionsContainer.querySelectorAll('[role="option"]');
+    
+  document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
+    const select = wrapper.querySelector('.custom-select');
+    const optionsContainer = wrapper.querySelector('.select-options');
+    const options = wrapper.querySelectorAll('[role="option"]');
 
     const closeOptions = () => {
       optionsContainer.style.display = 'none';
@@ -121,7 +122,6 @@
       }
     });
 
-    // Optional: Keyboard support
     select.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
@@ -131,6 +131,9 @@
         closeOptions();
       }
     });
+  });
+
+
   </script>
 </body>
 </html>
