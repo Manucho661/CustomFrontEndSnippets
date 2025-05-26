@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kebab Menu Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+    }
+
+    .menu-container {
+      position: relative;
+      display: inline-block;
+      
+    }
+    .kebab-menu {
+      cursor: pointer;
+      width: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 20px;
+    }
+
+    .kebab-menu span {
+      height: 4px;
+      width: 4px;
+      background-color: #333;
+      border-radius: 50%;
+      display: block;
+    }
+    .dropdown {
+      display: none;
+      /* position: absolute; */
+      top: 25px;
+      right: 0;
+      background-color: white;
+      border: 1px solid #ccc;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      min-width: 120px;
+      z-index: 1000;
+    }
+    .dropdown li {
+      padding: 10px;
+      cursor: pointer;
+    }
+    .dropdown li:hover {
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>My Post Title</h2>
+  <div class="menu-container">
+    <div class="kebab-menu" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <ul class="dropdown" id="menu">
+      <li>Edit</li>
+      <li>Delete</li>
+      <li>Share</li>
+    </ul>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById("menu");
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    // Optional: Close the menu when clicking outside
+    window.addEventListener("click", function(e) {
+      const menu = document.getElementById("menu");
+      const kebab = document.querySelector(".kebab-menu");
+      if (!kebab.contains(e.target)) {
+        menu.style.display = "none";
+      }
+    });
+  </script>
+
+</body>
+</html>
